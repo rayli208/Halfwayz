@@ -46,30 +46,6 @@ var myOptions = {
     mapTypeId: google.maps.MapTypeId.ROADMAP
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function initialize() {
     getLocation();
 }
@@ -86,7 +62,7 @@ function createMarker(latlng, label, html) {
         zIndex: Math.round(latlng.lat() * -100000) << 5
     });
 
-    // Add circle overlay and bind to marker
+    // ADD CIRCLE OVERLAY TO BIND TO MARKER
     var circle = new google.maps.Circle({
         map: map,
         radius: 2000, // 10 miles in metres
@@ -181,7 +157,7 @@ function calcRoute() {
             var summaryPanel = document.getElementById("directions_panel");
             summaryPanel.innerHTML = "";
 
-            // For each route, display summary information.
+            // DISPLAY INFORMATION FOR EACH ROUTE
             var legs = response.routes[0].legs;
             for (i = 0; i < legs.length; i++) {
                 if (i == 0) {
