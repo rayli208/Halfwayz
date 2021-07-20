@@ -1,5 +1,9 @@
-#googleMap{
-    width: 800px;
-    height: 400px;
-    margin: 20px auto;
-}
+html {
+    height: 100%
+  }
+  
+  body {
+    height: 100%;
+    margin: 0px;
+    padding: 0px
+  }
