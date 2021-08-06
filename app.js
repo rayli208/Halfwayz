@@ -1,35 +1,39 @@
-//INITIALIZE
+//PAINT A MAP ON LOAD
 google.maps.event.addDomListener(window, 'load', initialize);
 
-var directionsService = new google.maps.DirectionsService();
+function initialize() {
+    map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+}
+
+function getLocation() {
+    //GET LOCATION
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
 var map;
-var polyline;
+var directionsService = new google.maps.DirectionsService();
+//CREATE DIRECTION RENDER TO BE ABLE TO BIND TWO LOCATIONS
+var directionsDisplay = new google.maps.DirectionsRenderer();
 var midpoint = {
     lat: 0,
     lng: 0
 };
+//PAINT A LINE FROM DESTINATION TO DESTINATION
+var polyline = new google.maps.Polyline({
+    path: [],
+    strokeColor: 'purple',
+    strokeWeight: 5
+});
 let markers = [];
 let circles = [];
+let diameter;
 var infowindow = new google.maps.InfoWindow();
 //GEOCODER OBJECT
 var geocoder = new google.maps.Geocoder();
-//CREATE DIRECTION RENDER TO BE ABLE TO BIND TWO LOCATIONS
-var directionsDisplay = new google.maps.DirectionsRenderer();
-
-//CREATE AUTOCOMPLETE OBJECTS FOR THE INPUT FIELDS
-var options = {
-    fields: ["formatted_address", "geometry", "name"],
-    strictBounds: false,
-    types: ["address"],
-}
-
-//SET UP AUTOCOMPLETE FUNCTIONALITY
-var input1 = document.getElementById("start");
-var autocomplete1 = new google.maps.places.Autocomplete(input1, options);
-var input2 = document.getElementById("end");
-var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
-var totalDist = 0;
-var totalTime = 0;
 
 //DEFAULT LOCATION - NEW YORK
 var lat = 40.7128;
@@ -46,14 +50,23 @@ var myOptions = {
     mapTypeId: google.maps.MapTypeId.ROADMAP
 };
 
-function initialize() {
-    getLocation();
+//CREATE AUTOCOMPLETE OBJECTS FOR THE INPUT FIELDS
+var options = {
+    fields: ["formatted_address", "geometry", "name"],
+    strictBounds: false,
+    types: ["address"],
 }
+
+//SET UP AUTOCOMPLETE FUNCTIONALITY
+var input1 = document.getElementById("start");
+var autocomplete1 = new google.maps.places.Autocomplete(input1, options);
+var input2 = document.getElementById("end");
+var autocomplete2 = new google.maps.places.Autocomplete(input2, options);
+var totalDist = 0;
+var totalTime = 0;
 
 //CREATE THE MID POINT MARKER
 function createMarker(latlng, label, html) {
-    deleteMarkers();
-
     var contentString = '<b>' + label + '</b><br>' + html;
     var marker = new google.maps.Marker({
         position: latlng,
@@ -65,7 +78,7 @@ function createMarker(latlng, label, html) {
     // ADD CIRCLE OVERLAY TO BIND TO MARKER
     var circle = new google.maps.Circle({
         map: map,
-        radius: 2000, // 10 miles in metres
+        radius: ($("#diameter").val() * 1609.344), //CONVERT MILES INTO METERS
         fillColor: '#AA0000'
     });
     circle.bindTo('center', marker, 'position');
@@ -81,22 +94,6 @@ function createMarker(latlng, label, html) {
     circles.push(circle);
 
     return marker;
-}
-
-function getLocation() {
-    //GET LOCATION
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else {
-        alert("Geolocation is not supported by this browser.");
-    }
-
-    //PAINT A LINE FROM DESTINATION TO DESTINATION
-    polyline = new google.maps.Polyline({
-        path: [],
-        strokeColor: 'purple',
-        strokeWeight: 5
-    });
 }
 
 function showPosition(position) {
@@ -138,10 +135,15 @@ function showPosition(position) {
 }
 
 function calcRoute() {
+    //EMPTY OUT THE CAROUSEL
+    $('.carousel-item').remove();
+
+    //DELETE MARKERS
+    deleteMarkers();
     var start = document.getElementById("start").value;
     var end = document.getElementById("end").value;
     var travelMode = google.maps.DirectionsTravelMode.DRIVING
-
+    //SET UP REQUEST FOR DRIVING INSTRUCTIONS
     var request = {
         origin: start,
         destination: end,
@@ -154,8 +156,6 @@ function calcRoute() {
             startLocation = new Object();
             endLocation = new Object();
             directionsDisplay.setDirections(response);
-            var summaryPanel = document.getElementById("directions_panel");
-            summaryPanel.innerHTML = "";
 
             // DISPLAY INFORMATION FOR EACH ROUTE
             var legs = response.routes[0].legs;
@@ -184,11 +184,16 @@ function calcRoute() {
             map.setCenter(midpoint);
             map.setZoom(10);
             //WRITE OUT MID POINT COORDINATES
-            document.getElementById("midpoint").innerHTML = "Longitude of midpoint is: " + midpoint.lng + "</br> Latitude of midpoint is " + midpoint.lat;
+            document.getElementById("midpoint").innerHTML = `
+                <div class="control_panel-header">Midpoint:</div>
+                <div class="control_panel-value">(${midpoint.lng.toFixed(2)}, ${midpoint.lat.toFixed(2)})</div>
+            `
             getRestaurauntInfo(midpoint);
         } else {
             alert("directions response " + status);
         }
+        codeAddress(startLocation.address);
+        codeAddress(endLocation.address);
     });
 }
 
@@ -204,7 +209,14 @@ function computeTotalDistance(result) {
     putMarkerOnRoute(50);
 
     totalDist = totalDist / 1000.
-    document.getElementById("total").innerHTML = "total distance is: " + totalDist + " km<br>total time is: " + (totalTime / 60).toFixed(2) + " minutes";
+    $("#total").html(`
+        <div class="control_panel-header">Total Distance:</div>
+        <div class="control_panel-value">${(totalDist * 0.621371).toFixed(2)} miles</div>
+        <div class="control_panel-header">Total Time:</div>
+        <div class="control_panel-value">${(totalTime / 60).toFixed(2)} minutes</div>
+        <div class="control_panel-header">Halfwayz Saves You:</div>
+        <div class="control_panel-value text-success">${(((totalDist * 0.621371) / 2).toFixed(2))} miles and ${((totalTime / 60).toFixed(2) / 2)} minutes</div>
+    `)
 }
 
 //PUT THE MARKER ON ROAD DEPENDING ON PERCENTAGE
@@ -248,7 +260,7 @@ google.maps.Polyline.prototype.GetPointAtDistance = function (metres) {
     return newMap;
 }
 
-// //DELETE ALL MARKERS BY REMOVING THEIR REFERENCE
+//DELETE ALL MARKERS BY REMOVING THEIR REFERENCE
 function deleteMarkers() {
     for (let i = 0; i < markers.length; i++) {
         markers[i].setMap(null);
@@ -261,30 +273,64 @@ function deleteMarkers() {
 }
 
 //GET RESTAURAUNT INFO
-function getRestaurauntInfo(location){
-    console.log(location);
+function getRestaurauntInfo(location) {
+    console.log($("#location").val());
     var pyrmont = new google.maps.LatLng(location.lat, location.lng);
     var request = {
         location: pyrmont,
-        radius: '2000',
-        type: ['restaurant']
+        radius: ($("#diameter").val() * 1609.344),
+        type: [$("#location").val()]
     };
     service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, callback);
 }
 
 //SET UP MARKERS
-function callback(results, status){
-    if(status == google.maps.places.PlacesServiceStatus.OK){
-        for(var i = 0; i < results.length; i++){
+function callback(results, status) {
+    $('#contentCarousel').css('display', 'block');
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
             var place = results[i];
+            console.log(place);
+            var active = '';
             let price = createPrice(place.price_level);
             let content = `
             <h3>${place.name}</h3>
-            <h4>Price: ${place.vicinity}</h4>
-            <div>Price: ${price}</div>
-            <div>${place.rating}</div>
             `;
+
+            if (i == 0) {
+                active = "active";
+            } else {
+                active = "";
+            }
+
+
+            $(`
+                <div class="carousel-item ${active}">
+                    <div class="carousel-item-container">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-3">
+                                    <div class="carousel-item_image">
+                                        <img
+                                            src="${place.photos[0].getUrl()}">
+                                    </div>
+                                </div>
+                                <div class="col-6 pt-2 pb-3">
+                                <div class="carousel-item_header">${place.name} (<span class="carousel-item_price">${price}</span>)</div>
+                                    <div class="carousel-item_location">Location: ${place.vicinity}</div>
+                                </div>
+                                <div class="col-3 pt-2 pb-3">
+                                    <div class="carousel-item_rating">Rating: ${place.rating}/5</div>
+                                    <div class="carousel-item_reviews">Total Ratings: ${place.user_ratings_total}</div>
+                                    <div class="carousel-item_isopen">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).appendTo('.carousel-inner');
 
             var marker = new google.maps.Marker({
                 position: place.geometry.location,
@@ -305,22 +351,43 @@ function callback(results, status){
 }
 
 //BIND CLICK EVENT TO MARKERS
-function bindInfoWindow(marker, map, infowindow, html){
-    marker.addListener('click', function(){
+function bindInfoWindow(marker, map, infowindow, html) {
+    marker.addListener('click', function () {
         infowindow.setContent(html);
         infowindow.open(map, this);
     });
 }
 
 //CREATE PRICING
-function createPrice(level){
-    if(level != "" && level != null){
+function createPrice(level) {
+    if (level != "" && level != null) {
         let out = "";
-        for (var x = 0; x < level; x++){
+        for (var x = 0; x < level; x++) {
             out += "$";
         }
         return out;
-    }else{
+    } else {
         return "?";
     }
+}
+
+//PUT MARKER ON MAP OFF ADDRESS
+function codeAddress(address) {
+    geocoder.geocode({
+        'address': address
+    }, function (results, status) {
+        var latLng = {
+            lat: results[0].geometry.location.lat(),
+            lng: results[0].geometry.location.lng()
+        };
+        if (status == 'OK') {
+            var marker = new google.maps.Marker({
+                position: latLng,
+                map: map
+            });
+            markers.push(marker);
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
 }
