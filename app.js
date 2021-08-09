@@ -5,8 +5,8 @@ function initialize() {
     map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
 }
 
+//GET LOCATION
 function getLocation() {
-    //GET LOCATION
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
     } else {
@@ -38,12 +38,14 @@ var geocoder = new google.maps.Geocoder();
 //DEFAULT LOCATION - NEW YORK
 var lat = 40.7128;
 var lng = -74.0060;
+
 //GLOBAL VARIABLES
 var myLatLng = {
     lat: lat,
     lng: lng
 };
 
+//MAP OPTIONS
 var myOptions = {
     center: myLatLng,
     zoom: 14,
@@ -183,11 +185,15 @@ function calcRoute() {
             //CENTER MAP ON MIDPOINT AND ZOOM OUT A BIT
             map.setCenter(midpoint);
             map.setZoom(10);
-            //WRITE OUT MID POINT COORDINATES
-            document.getElementById("midpoint").innerHTML = `
-                <div class="control_panel-header">Midpoint:</div>
-                <div class="control_panel-value">(${midpoint.lng.toFixed(2)}, ${midpoint.lat.toFixed(2)})</div>
-            `
+            // //WRITE OUT MID POINT COORDINATES
+            // document.getElementById("midpoint").innerHTML = `
+            //     <div class="card text-dark bg-light" style="max-width: 18rem;">
+            //         <div class="card-header">Midpoint:</div>
+            //         <div class="card-body">
+            //             <p class="card-text">(${midpoint.lng.toFixed()}, ${midpoint.lat.toFixed()})</p>
+            //         </div>
+            //     </div>
+            // `
             getRestaurauntInfo(midpoint);
         } else {
             alert("directions response " + status);
@@ -210,12 +216,24 @@ function computeTotalDistance(result) {
 
     totalDist = totalDist / 1000.
     $("#total").html(`
-        <div class="control_panel-header">Total Distance:</div>
-        <div class="control_panel-value">${(totalDist * 0.621371).toFixed(2)} miles</div>
-        <div class="control_panel-header">Total Time:</div>
-        <div class="control_panel-value">${(totalTime / 60).toFixed(2)} minutes</div>
-        <div class="control_panel-header">Halfwayz Saves You:</div>
-        <div class="control_panel-value text-success">${(((totalDist * 0.621371) / 2).toFixed(2))} miles and ${((totalTime / 60).toFixed(2) / 2)} minutes</div>
+        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+            <div class="card-header">Total Distance:</div>
+            <div class="card-body">
+                <p class="card-text">${(totalDist * 0.621371).toFixed(2)} miles</p>
+            </div>
+        </div>
+        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+            <div class="card-header">Total Time:</div>
+            <div class="card-body">
+                <p class="card-text">${Math.round((totalTime / 60).toFixed(2))} minutes</p>
+            </div>
+        </div>
+        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+            <div class="card-header">Midpointz Saves You:</div>
+            <div class="card-body">
+                <p class="card-text text-success">${Math.round((((totalDist * 0.621371) / 2).toFixed(2)))} miles and ${Math.round(((totalTime / 60).toFixed(2) / 2))} minutes</p>
+            </div>
+        </div>
     `)
 }
 
@@ -229,7 +247,6 @@ function putMarkerOnRoute(percentage) {
         marker.setPosition(polyline.GetPointAtDistance(distance));
         marker.setTitle("time:" + time);
     }
-
 }
 
 // from http://www.geocodezip.com/scripts/v3_epoly.js, modified to use the geometry library
@@ -274,12 +291,11 @@ function deleteMarkers() {
 
 //GET RESTAURAUNT INFO
 function getRestaurauntInfo(location) {
-    console.log($("#location").val());
     var pyrmont = new google.maps.LatLng(location.lat, location.lng);
     var request = {
         location: pyrmont,
         radius: ($("#diameter").val() * 1609.344),
-        type: [$("#location").val()]
+        type: [$("#location").val()],
     };
     service = new google.maps.places.PlacesService(map);
     service.nearbySearch(request, callback);
@@ -291,19 +307,61 @@ function callback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         for (var i = 0; i < results.length; i++) {
             var place = results[i];
-            console.log(place);
             var active = '';
-            let price = createPrice(place.price_level);
+            //CONTENT FOR PIN POINT
             let content = `
-            <h3>${place.name}</h3>
+                <h3>${place.name}</h3>
             `;
+            console.log(place.vicinity);
+            //CREATE VARIABLES FOR POPULATING SCROLLER
+            let picture;
+            let price;
+            let rating;
+            let peopleRating;
+            let lat = place.geometry.location.lat();
+            let lng = place.geometry.location.lng();
 
+            //CHECK IF THIS IS THE FIRST ONE AND MAKE ACTIVE IF IT IS
             if (i == 0) {
                 active = "active";
             } else {
                 active = "";
             }
+            //CHECK FOR IMAGE
+            if(place.photos){
+                picture = `<img src="${place.photos[0].getUrl()}">`;
+            }else{
+                picture = '<img src="./images/no-image.png" alt="">';
+            }
+            //CHECK FOR PRICE
+            if(place.price_level){
+                price = `(<span class="carousel-item_price">${createPrice(place.price_level)}</span>)`;
+            }else{
+                price = '';
+            }
+            //CHECK FOR RATING
+            if(place.rating){
+                rating = `<div class="carousel-item_rating">Rating: ${place.rating}/5</div>`;
+            }else{
+                rating = '';
+            }
+            //CHECK FOR TOTAL PEOPLE RATING
+            if(place.user_ratings_total){
+                peopleRating = `<div class="carousel-item_reviews">Total Ratings: ${place.user_ratings_total}</div>`
+            }else{
+                peopleRating = '';
+            }
 
+
+            // var d = new Date();
+
+            // if(place.opening_hours)
+            // {
+            //     console.log(Date.now());
+            //     console.log('OPENING HOURS:' + place.opening_hours.isOpen());
+            //     console.log('WE HAVE OPENING HOURS');
+            // }
+            //CHECK IF IT IS OPEN OR CLOSED
 
             $(`
                 <div class="carousel-item ${active}">
@@ -312,18 +370,25 @@ function callback(results, status) {
                             <div class="row">
                                 <div class="col-3">
                                     <div class="carousel-item_image">
-                                        <img
-                                            src="${place.photos[0].getUrl()}">
+                                        ${picture}
                                     </div>
                                 </div>
                                 <div class="col-6 pt-2 pb-3">
-                                <div class="carousel-item_header">${place.name} (<span class="carousel-item_price">${price}</span>)</div>
+                                <div class="carousel-item_header">${place.name} ${price}</div>
                                     <div class="carousel-item_location">Location: ${place.vicinity}</div>
                                 </div>
                                 <div class="col-3 pt-2 pb-3">
-                                    <div class="carousel-item_rating">Rating: ${place.rating}/5</div>
-                                    <div class="carousel-item_reviews">Total Ratings: ${place.user_ratings_total}</div>
+                                    ${rating}
+                                    ${peopleRating}
                                     <div class="carousel-item_isopen">
+                                    </div>
+                                    <div class="carousel-item_wrapper">
+                                        <button onclick="locateOnMap(${lat}, ${lng})" type="button" class="btn btn-primary">
+                                            <i class="fas fa-map-pin"></i>
+                                        </button>
+                                        <button onclick="openGoogleMapNav(${lat}, ${lng})" type="button" class="btn btn-primary">
+                                            <i class="fas fa-road"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -390,4 +455,17 @@ function codeAddress(address) {
             alert('Geocode was not successful for the following reason: ' + status);
         }
     });
+}
+
+//ZOOM IN ON THE LOCATION ON THE MAP
+function locateOnMap(lat, lng){
+    const center = new google.maps.LatLng(lat, lng);
+    map.panTo(center);
+    map.setZoom(14);
+}
+
+//OPEN LOCATION IN GOOGLE MAPS
+function openGoogleMapNav(lat, lng){
+    const url = `http://maps.google.com/maps?q=loc:${lat},${lng}&navigate=yes`;
+    window.open(url, '_blank');
 }
