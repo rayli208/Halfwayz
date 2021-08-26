@@ -312,7 +312,6 @@ function callback(results, status) {
             let content = `
                 <h3>${place.name}</h3>
             `;
-            console.log(place.vicinity);
             //CREATE VARIABLES FOR POPULATING SCROLLER
             let picture;
             let price;
@@ -320,6 +319,7 @@ function callback(results, status) {
             let peopleRating;
             let lat = place.geometry.location.lat();
             let lng = place.geometry.location.lng();
+            let openOrClosed;
 
             //CHECK IF THIS IS THE FIRST ONE AND MAKE ACTIVE IF IT IS
             if (i == 0) {
@@ -328,41 +328,73 @@ function callback(results, status) {
                 active = "";
             }
             //CHECK FOR IMAGE
-            if(place.photos){
+            if (place.photos) {
                 picture = `<img src="${place.photos[0].getUrl()}">`;
-            }else{
+            } else {
                 picture = '<img src="./images/no-image.png" alt="">';
             }
             //CHECK FOR PRICE
-            if(place.price_level){
+            if (place.price_level) {
                 price = `(<span class="carousel-item_price">${createPrice(place.price_level)}</span>)`;
-            }else{
+            } else {
                 price = '';
             }
             //CHECK FOR RATING
-            if(place.rating){
-                rating = `<div class="carousel-item_rating">Rating: ${place.rating}/5</div>`;
-            }else{
+            if (place.rating) {
+                switch (true) {
+                    case (place.rating > 4.5):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 4):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>`;
+                        break;
+                    case (place.rating > 3.5):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 3):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 2.5):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 2):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 1.5):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 1):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 0.5):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 0):
+                        rating = `<div class="carousel-item_rating"><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    default:
+                        rating = ``;
+                        break;
+                }
+            } else {
                 rating = '';
             }
+
             //CHECK FOR TOTAL PEOPLE RATING
-            if(place.user_ratings_total){
-                peopleRating = `<div class="carousel-item_reviews">Total Ratings: ${place.user_ratings_total}</div>`
-            }else{
+            if (place.user_ratings_total) {
+                peopleRating = `<div class="carousel-item_reviews">${place.user_ratings_total} Ratings</div>`
+            } else {
                 peopleRating = '';
             }
-
-
-            // var d = new Date();
-
-            // if(place.opening_hours)
-            // {
-            //     console.log(Date.now());
-            //     console.log('OPENING HOURS:' + place.opening_hours.isOpen());
-            //     console.log('WE HAVE OPENING HOURS');
-            // }
-            //CHECK IF IT IS OPEN OR CLOSED
-
+            //CHECK IF PLACE IS OPEN OR CLOSED
+            if (place.opening_hours.open_now == true) {
+                openOrClosed = `<div class="carousel-item_isopen"><span class="badge bg-success">Open</span></div>`;
+            } else if (place.opening_hours.open_now == false) {
+                openOrClosed = `<div class="carousel-item_isopen"><span class="badge bg-danger">Closed</span></div>`;
+            } else {
+                openOrClosed = ``;
+            }
+            // CHECK IF IT IS OPEN OR CLOSED
             $(`
                 <div class="carousel-item ${active}">
                     <div class="carousel-item-container">
@@ -380,8 +412,7 @@ function callback(results, status) {
                                 <div class="col-3 pt-2 pb-3">
                                     ${rating}
                                     ${peopleRating}
-                                    <div class="carousel-item_isopen">
-                                    </div>
+                                    ${openOrClosed}
                                     <div class="carousel-item_wrapper">
                                         <button onclick="locateOnMap(${lat}, ${lng})" type="button" class="btn btn-primary">
                                             <i class="fas fa-map-pin"></i>
@@ -458,14 +489,14 @@ function codeAddress(address) {
 }
 
 //ZOOM IN ON THE LOCATION ON THE MAP
-function locateOnMap(lat, lng){
+function locateOnMap(lat, lng) {
     const center = new google.maps.LatLng(lat, lng);
     map.panTo(center);
     map.setZoom(14);
 }
 
 //OPEN LOCATION IN GOOGLE MAPS
-function openGoogleMapNav(lat, lng){
+function openGoogleMapNav(lat, lng) {
     const url = `http://maps.google.com/maps?q=loc:${lat},${lng}&navigate=yes`;
     window.open(url, '_blank');
 }

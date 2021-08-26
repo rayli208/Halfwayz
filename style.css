@@ -3,6 +3,9 @@
   --secondary-color: #E75A7C;
   --tertiary-color: #F2F5EA;
   --quintary-color: #D6DBD2;
+  --green: #198754;
+  --red: #dc3545;
+  --yellow: #ffc107;
   /*
     USAGE EXAMPLE
     var(--quintary-color)
@@ -140,6 +143,14 @@ body {
 
 .carousel-item_price{
   color: #198754;
+}
+
+.carousel-item_rating .fas{
+  color: var(--yellow);
+}
+
+.carousel-item_rating .far{
+  color: var(--yellow);
 }
 
 .carousel-item_isopen{
