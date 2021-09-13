@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mid Point</title>
+    <title>MidPointz</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -77,10 +77,10 @@
     </div>
     <div class="container">
         <div class="row">
-            <div class="col-9" style="height: 100%;">
+            <div class="col-12 col-md-9 order-2 order-md-1" style="height: 100%;">
                 <div id="map_canvas" class="shadow"></div>
             </div>
-            <div class="col-3">
+            <div class="col-12 col-md-3 order-1 order-md-2">
                 <div id="total">
 
                 </div>
@@ -107,15 +107,153 @@
                 </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.6.0.js"
-            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
-        <script
-            src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&libraries=places">
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
-        </script>
-        <script src="./app.js"></script>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="info-modal-image-container">
+                    <h5 class="info-modal-image-container-header shadow-lg" id="infoModalLabel">Vincentown Diner</h5>
+                    <button type="button" class="btn-close info-modal-image-container-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                    <div class="info-modal-image-container-sub-header">
+                        <h6>Address: 2357 US-206, Southampton Township, NJ 08088, USA</h6>
+                    </div>
+                    <div id="modalImageSlideCarousel" class="carousel slide" data-interval="500"
+                        data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <img src="https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sAap_uEAg2gphDqYeWm-j4N0AQq9M_fdyxHXKhTNjl4FcZII5LEDf7b2oTNYH-wp3I0CpUJtD8o8Y0zeWQWKNO11wpMqJuSkMDFXSgH1D16X3jXs76Npd9lkHw4B1H-QSJo68QlVw-W1CGWo6tthoJYH-mc-1QCr-aJG-cHgPou-6cdWRosUO&3u1600&5m1&2e1&callback=none&key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&token=42163"
+                                    class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sAap_uEC28VUiZl0ykKd1qZb34jaifhFCMhAvxKetCEq6lTXLIcK6lU8b5PapHVpmMJTPhQdTSFlgJkHtpXkhnV9NqmoxgpXGnyJBC9flo7P0kwQiuPROLSUjHBVYSqzg1n3FY9er-awcdo_PQ3HfK_JY9CWMVwH-hvaQEDAeWEAY70oxxVZx&3u4000&5m1&2e1&callback=none&key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&token=47590"
+                                    class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sAap_uEBDXD3uaO5SiUwXdxRwASkdBR4g7Y0X7pvvzykNX2al0m4Mc5WFEAs9NzrQB9MWLn175HvXcP8Wlqk-1mfAtZYBfA5WiGHr-gG6d1KVfgBAjMmkasRFS9mnfQvlDYWNo1fHvtBUYBU6uwXC3b1-29omR3o7ehxUjqQWHyF2t7xFnqCW&3u604&5m1&2e1&callback=none&key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&token=90985"
+                                    class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sAap_uECCbO2w6f3Hntht0nw5IrVkv3l4RB2GYuDKwoBp4Cz8fsKNsTS-_jFzgoGS5Re2mBG4V28VqSZUIR9-pJwOjXfkkF1e1L8eDDCnOjh4rO1uOAhzmD9CG5ZRU5HbHaIMHxIHryTUyA3RKkxEl1Mat5so4YtDnrVoyyCpEhm8JFmtvhdw&3u540&5m1&2e1&callback=none&key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&token=4834"
+                                    class="d-block w-100" alt="...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body mb-5">
+                    <!--COLLAPSIBLE-->
+                    <button class="btn btn-primary schedule-collapse-button" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#scheduleCollapse" aria-expanded="false" aria-controls="scheduleCollapse">
+                        <span>Hours of Operation</span>
+                        <span class="badge rounded-pill bg-success">Open</span>
+                    </button>
+                    <div class="collapse" id="scheduleCollapse">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Monday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item">Tuesday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item">Wednesday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item active">Thursday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item">Friday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item">Saturday: 8:00 AM – 9:00 PM</li>
+                            <li class="list-group-item">Sunday: 8:00 AM – 9:00 PM</li>
+                        </ul>
+                    </div>
+                    <!--REVIEWS-->
+                    <div id="reviewCarousel" class="carousel slide py-3" data-bs-interval="false">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <div class="carousel-item-container-modal">
+                                    <div class="carousel-item-container-modal-body">
+                                        <h5 class="card-title">
+                                            <img src="https://lh3.googleusercontent.com/a-/AOh14GgHRL2btJFAFVEdaQY5J8G6puvGM-nIChHZFNQB_w=s128-c0x00000000-cc-rp-mo"
+                                                class="carousel-item-container-modal_image" alt="...">
+                                            <span class="carousel-item-container-header">Nick Houck</span>
+                                        </h5>
+                                        <div class="carousel-item-container-sub">"Magerks has always been a safe go-to
+                                            for me. Ive always
+                                            liked the food and the beer selections, but the recent remodel makes the
+                                            whole place hit different. The outdoor bar they installed is breathtaking.
+                                            My latest visit was a week ago and I can't wait to get back. Congrats
+                                            Magerks."</div>
+                                            <div class="carousel-item-container-date">- in the last week</div>
+                                            <div class="carousel-item-container-rating">4/5</div>                                            
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="carousel-item-container-modal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <img src="https://lh3.googleusercontent.com/a-/AOh14GhuGjYdQanvml8OTky6sKHR0Whd_kNRiJtQydCNVZU=s128-c0x00000000-cc-rp-mo-ba5"
+                                                class="carousel-item-container-modal_image" alt="...">
+                                            <span class="carousel-item-container-header">Dan Radice</span>
+                                        </h5>
+                                        <div class="carousel-item-container-sub">"Get the CRAB CAKE sandwich!"</div>
+                                        <div class="carousel-item-container-date">- in the last week</div>
+                                        <div class="carousel-item-container-rating">4/5</div>                                            
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="carousel-item-container-modal">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <img src="https://lh3.googleusercontent.com/a/AATXAJxjDL0oU3YZehI13JkH-FCjUDtT1_xwjM_zGKVs=s128-c0x00000000-cc-rp-mo-ba3"
+                                                class="carousel-item-container-modal_image" alt="...">
+                                            <span class="carousel-item-container-header">Fred Kurtz</span>
+                                        </h5>
+                                        <div class="carousel-item-container-sub">"Nice pub. Very clean and well spaced
+                                            high-tops and tables.
+                                            Light crowd for mid-afternoon lunch.\nStaff was friendly and made good
+                                            recommendations for apps.\nFood came quickly and was prepared well. Decent
+                                            prices and nice variety of offerings. Will come back."</div>
+                                        <div class="carousel-item-container-date">- in the last week</div>
+                                        <div class="carousel-item-container-rating">4/5</div>                                            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#reviewCarousel"
+                            data-bs-slide="prev">
+                            <span><i class="fa fa-angle-left carousel-control-icon-mini" aria-hidden="true"></i></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#reviewCarousel"
+                            data-bs-slide="next">
+                            <span><i class="fa fa-angle-right carousel-control-icon-mini" aria-hidden="true"></i></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                    <!--TYPES-->
+                    <div class="mt-3">
+                        <span>Types:</span>
+                        <span class="badge rounded-pill bg-pink text-light">bar</span>
+                        <span class="badge rounded-pill bg-pink text-light">restaurant</span>
+                        <span class="badge rounded-pill bg-pink text-light">food</span>
+                        <span class="badge rounded-pill bg-pink text-light">point_of_interest</span>
+                    </div>
+                </div>
+                <div class="info-modal-buttons">
+                    <a type="button" class="btn btn-outline-primary" href="tel:+(609)267-3033"><i
+                            class="fas fa-phone-volume"></i></a>
+                    <a type="button" class="btn btn-outline-primary" target="_blank"
+                        href="https://maps.google.com/?cid=17788236930812434309"><i
+                            class="fas fa-map-marked-alt"></i></a>
+                    <a type="button" class="btn btn-outline-primary" target="_blank"
+                        href="http://www.vincentowndiner.com/"><i class="fab fa-safari"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyAyr-lcBE88QXhIuEPKfUBT8ugwGSVrY4c&libraries=places">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+    </script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

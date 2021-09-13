@@ -3,6 +3,8 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function initialize() {
     map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+    $('#infoModal').modal('show');
+    console.log("show");
 }
 
 //GET LOCATION
@@ -15,6 +17,7 @@ function getLocation() {
 }
 
 var map;
+//DIRECTIONS SERVICE OBJECT
 var directionsService = new google.maps.DirectionsService();
 //CREATE DIRECTION RENDER TO BE ABLE TO BIND TWO LOCATIONS
 var directionsDisplay = new google.maps.DirectionsRenderer();
@@ -194,10 +197,11 @@ function calcRoute() {
             //         </div>
             //     </div>
             // `
-            getRestaurauntInfo(midpoint);
+            getVenueInfo(midpoint);
         } else {
             alert("directions response " + status);
         }
+
         codeAddress(startLocation.address);
         codeAddress(endLocation.address);
     });
@@ -215,20 +219,22 @@ function computeTotalDistance(result) {
     putMarkerOnRoute(50);
 
     totalDist = totalDist / 1000.
+
+    //THROW IN SOME CARDS WITH FUN FACTS
     $("#total").html(`
-        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+        <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
             <div class="card-header">Total Distance:</div>
             <div class="card-body">
                 <p class="card-text">${(totalDist * 0.621371).toFixed(2)} miles</p>
             </div>
         </div>
-        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+        <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
             <div class="card-header">Total Time:</div>
             <div class="card-body">
                 <p class="card-text">${Math.round((totalTime / 60).toFixed(2))} minutes</p>
             </div>
         </div>
-        <div class="card text-dark bg-light mb-3" style="max-width: 18rem;">
+        <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
             <div class="card-header">Midpointz Saves You:</div>
             <div class="card-body">
                 <p class="card-text text-success">${Math.round((((totalDist * 0.621371) / 2).toFixed(2)))} miles and ${Math.round(((totalTime / 60).toFixed(2) / 2))} minutes</p>
@@ -290,7 +296,7 @@ function deleteMarkers() {
 }
 
 //GET RESTAURAUNT INFO
-function getRestaurauntInfo(location) {
+function getVenueInfo(location) {
     var pyrmont = new google.maps.LatLng(location.lat, location.lng);
     var request = {
         location: pyrmont,
@@ -319,7 +325,7 @@ function callback(results, status) {
             let peopleRating;
             let lat = place.geometry.location.lat();
             let lng = place.geometry.location.lng();
-            let openOrClosed;
+            let placeId = place.place_id;
 
             //CHECK IF THIS IS THE FIRST ONE AND MAKE ACTIVE IF IT IS
             if (i == 0) {
@@ -386,14 +392,7 @@ function callback(results, status) {
             } else {
                 peopleRating = '';
             }
-            //CHECK IF PLACE IS OPEN OR CLOSED
-            if (place.opening_hours.open_now == true) {
-                openOrClosed = `<div class="carousel-item_isopen"><span class="badge bg-success">Open</span></div>`;
-            } else if (place.opening_hours.open_now == false) {
-                openOrClosed = `<div class="carousel-item_isopen"><span class="badge bg-danger">Closed</span></div>`;
-            } else {
-                openOrClosed = ``;
-            }
+
             // CHECK IF IT IS OPEN OR CLOSED
             $(`
                 <div class="carousel-item ${active}">
@@ -412,13 +411,12 @@ function callback(results, status) {
                                 <div class="col-3 pt-2 pb-3">
                                     ${rating}
                                     ${peopleRating}
-                                    ${openOrClosed}
                                     <div class="carousel-item_wrapper">
+                                        <button onclick="showInfoModal('${placeId}')" type="button" class="btn btn-primary">
+                                            <i class="fas fa-info-circle"></i>
+                                        </button>
                                         <button onclick="locateOnMap(${lat}, ${lng})" type="button" class="btn btn-primary">
                                             <i class="fas fa-map-pin"></i>
-                                        </button>
-                                        <button onclick="openGoogleMapNav(${lat}, ${lng})" type="button" class="btn btn-primary">
-                                            <i class="fas fa-road"></i>
                                         </button>
                                     </div>
                                 </div>
@@ -495,8 +493,20 @@ function locateOnMap(lat, lng) {
     map.setZoom(14);
 }
 
-//OPEN LOCATION IN GOOGLE MAPS
-function openGoogleMapNav(lat, lng) {
-    const url = `http://maps.google.com/maps?q=loc:${lat},${lng}&navigate=yes`;
-    window.open(url, '_blank');
+//SHOW MORE INFO
+function showInfoModal(placeId) {
+
+    var service = new google.maps.places.PlacesService(map);
+
+    service.getDetails({
+        placeId: placeId
+    }, function (place, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            if (place) {
+                for (i = 0; i < place.photos.length; i++) {
+                    console.log(place);
+                }
+            }
+        }
+    });
 }
