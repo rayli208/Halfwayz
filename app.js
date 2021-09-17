@@ -3,8 +3,6 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 function initialize() {
     map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
-    $('#infoModal').modal('show');
-    console.log("show");
 }
 
 //GET LOCATION
@@ -424,7 +422,7 @@ function callback(results, status) {
                         </div>
                     </div>
                 </div>
-            `).appendTo('.carousel-inner');
+            `).appendTo('.carousel-inner-main');
 
             var marker = new google.maps.Marker({
                 position: place.geometry.location,
@@ -502,11 +500,238 @@ function showInfoModal(placeId) {
         placeId: placeId
     }, function (place, status) {
         if (status === google.maps.places.PlacesServiceStatus.OK) {
-            if (place) {
-                for (i = 0; i < place.photos.length; i++) {
-                    console.log(place);
+            console.log(place);
+            //CLEAR OUT MODAL
+            $('#infoModal').empty();
+            //CREATE VARIABLES FOR MODAL
+            let name;
+            let address;
+            let phone;
+            let rating;
+            let mapsLocation;
+            let website;
+            let photos = [];
+            let reviews = [];
+            let types = [];
+            let hours = [];
+            let isOpen;
+
+            //CHECK FOR NAME
+            if (place.name) {
+                name = `<h5 class="info-modal-image-container-header shadow-lg" id="infoModalLabel">${place.name}</h5>`;
+            } else {
+                name = '';
+            }
+            //CHECK FOR ADDRESS
+            if (place.formatted_address) {
+                address = `<div class="info-modal-image-container-sub-header">
+                                <h6>${place.formatted_address}</h6>
+                            </div>`;
+            } else {
+                address = '';
+            }
+            //CHECK FOR PHONE
+            if (place.international_phone_number) {
+                phone = `<a type="button" class="btn btn-outline-primary" href="tel:${place.international_phone_number}">
+                            <i class="fas fa-phone-volume"></i>
+                        </a>`;
+            } else {
+                phone = '';
+            }
+            //CHECK FOR MAPS LOCATION
+            if (place.url) {
+                mapsLocation = `<a type="button" class="btn btn-outline-primary" target="_blank" href="${place.url}">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </a>`;
+            } else {
+                mapsLocation = '';
+            }
+            //CHECK FOR WEBSITE
+            if (place.website) {
+                website = `<a type="button" class="btn btn-outline-primary" target="_blank" href="${place.website}">
+                                <i class="fab fa-safari"></i>
+                            </a>`;
+            } else {
+                website = '';
+            }
+            //CHECK FOR HOURS
+            if (place.opening_hours) {
+                console.log(place.opening_hours.isOpen())
+                for (var i = 0; i < place.opening_hours.weekday_text.length; i++) {
+                    hours += `<li class="list-group-item">${place.opening_hours.weekday_text[i]}</li>`;
+                }
+
+                if (place.opening_hours.isOpen() == true) {
+                    isOpen = `<span class="badge rounded-pill bg-success">Open</span>`;
+                } else if (place.opening_hours.isOpen() == false) {
+                    isOpen = `<span class="badge rounded-pill bg-danger">Closed</span>`;
+                } else {
+                    isOpen = ``;
                 }
             }
+            //CHECK FOR RATING
+            if (place.rating) {
+                switch (true) {
+                    case (place.rating > 4.5):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 4):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>`;
+                        break;
+                    case (place.rating > 3.5):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 3):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 2.5):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 2):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 1.5):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 1):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 0.5):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    case (place.rating > 0):
+                        rating = `<div class="carousel-item_rating info-modal-image-container-rating"><i class="fas fa-star-half-alt"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>`;
+                        break;
+                    default:
+                        rating = ``;
+                        break;
+                }
+            } else {
+                rating = '';
+            }
+            //CHECK FOR PHOTOS
+            if (place.photos) {
+                for (var i = 0; i < place.photos.length; i++) {
+                    if (i == 0) {
+                        photos += `<div class="carousel-item active">
+                                        <img src="${place.photos[i].getUrl()}" class="d-block h-100 w-100" alt="location image">
+                                    </div>`
+                    } else {
+                        photos += `<div class="carousel-item">
+                                        <img src="${place.photos[i].getUrl()}" class="d-block h-100 w-100" alt="location image">
+                                    </div>`
+                    }
+                }
+            } else {
+                photos = '';
+            }
+            //CHECK FOR REVIEWS
+            if (place.reviews) {
+                for (var i = 0; i < place.reviews.length; i++) {
+                    if (i == 0) {
+                        reviews += `<div class="carousel-item active">
+                                        <div class="carousel-item-container-modal">
+                                            <div class="carousel-item-container-modal-body">
+                                                <h5 class="card-title">
+                                                    <img src="${place.reviews[i].profile_photo_url}"
+                                                        class="carousel-item-container-modal_image" alt="...">
+                                                    <span class="carousel-item-container-header">${place.reviews[i].author_name}</span>
+                                                </h5>
+                                                <div class="carousel-item-container-sub">"${place.reviews[i].text}"</div>
+                                                    <div class="carousel-item-container-date">- ${place.reviews[i].relative_time_description}</div>
+                                                    <div class="carousel-item-container-rating">${place.reviews[i].rating}/5</div>                                            
+                                                </div>
+                                        </div>
+                                    </div>`
+                    } else {
+                        reviews += `<div class="carousel-item">
+                                        <div class="carousel-item-container-modal">
+                                            <div class="carousel-item-container-modal-body">
+                                                <h5 class="card-title">
+                                                    <img src="${place.reviews[i].profile_photo_url}"
+                                                        class="carousel-item-container-modal_image" alt="...">
+                                                    <span class="carousel-item-container-header">${place.reviews[i].author_name}</span>
+                                                </h5>
+                                                <div class="carousel-item-container-sub">"${place.reviews[i].text}"</div>
+                                                    <div class="carousel-item-container-date">- ${place.reviews[i].relative_time_description}</div>
+                                                    <div class="carousel-item-container-rating">${place.reviews[i].rating}/5</div>                                            
+                                                </div>
+                                        </div>
+                                    </div>`
+                    }
+                }
+            }
+            //CHECK FOR TYPES
+            if (place.types) {
+                for (var i = 0; i < place.types.length; i++) {
+                    types += `<span class="badge rounded-pill bg-pink text-light mx-1">${(place.types[i].split('_').join(' '))}</span>`;
+                }
+            } else {
+                types = '';
+            }
+
+            //POPULATE MODAL
+            $(`
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="info-modal-image-container">
+                        ${name}
+                        <button type="button" class="btn-close info-modal-image-container-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                        ${address}
+                        ${rating}
+                        <div id="modalImageSlideCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                ${photos}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body mb-5">
+                        <button class="btn btn-primary schedule-collapse-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#scheduleCollapse" aria-expanded="false" aria-controls="scheduleCollapse">
+                            <span>Hours of Operation</span>
+                            ${isOpen}
+                        </button>
+                        <div class="collapse" id="scheduleCollapse">
+                            <ul class="list-group">
+                                ${hours}
+                            </ul>
+                        </div>
+                        <div id="reviewCarousel" class="carousel slide py-3" data-bs-interval="false">
+                            <div class="carousel-inner">
+                                ${reviews}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#reviewCarousel"
+                                data-bs-slide="prev">
+                                <span><i class="fa fa-angle-left carousel-control-icon-mini" aria-hidden="true"></i></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#reviewCarousel"
+                                data-bs-slide="next">
+                                <span><i class="fa fa-angle-right carousel-control-icon-mini" aria-hidden="true"></i></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <span>Types:</span>
+                            ${types}
+                        </div>
+                    </div>
+                    <div class="info-modal-buttons">
+                        ${phone}
+                        ${mapsLocation}
+                        ${website}
+                    </div>
+                </div>
+            </div>
+         `).appendTo('#infoModal');
+            //SHOW MODAL
+            $('#infoModal').modal('show');
+            //GET AUTO SCROLLER TO TRIGGER
+            $('#modalImageSlideCarousel').carousel({
+                interval: 3000,
+                cycle: true
+            });
         }
     });
 }

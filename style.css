@@ -27,6 +27,7 @@ body {
     radial-gradient(at 82% 65%, hsl(345.53, 75%, 63%) 0, transparent 55%);
 }
 
+/*Bootstrap overrides*/
 .h1,
 .h2,
 .h3,
@@ -42,7 +43,7 @@ h6 {
   color: var(--primary-color);
 }
 
-.btn-submit {
+.btn-submit, .btn-submit:focus, .btn-submit:active{
   color: var(--primary-color);
   background-color: var(--tertiary-color);
   border-color: var(--secondary-color);
@@ -53,26 +54,38 @@ h6 {
   background-color: var(--secondary-color);
 }
 
+.btn-primary, .btn-check:focus+.btn-primary, .btn-primary:focus{
+  color: var(--secondary-color);
+  background-color: var(--tertiary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  transition: .2s;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-primary {
+  color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:active {
+  color: #fff;
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
 .bg-pink{
   background-color: var(--secondary-color);
 }
-
 /* Map */
 #map_canvas {
   height: 400px;
   width: auto;
   border-radius: .25em;
 }
-
-/* Data Panel */
-/* #control_panel{
-  height: 100%;
-  backdrop-filter: blur(25px) saturate(150%);
-  -webkit-backdrop-filter: blur(25px) saturate(150%);
-  background-color: rgba(255, 255, 255, 0.75);
-  border-radius: 12px;
-  border: 1px solid rgba(209, 213, 219, 0.3);
-} */
 
 .control_panel-header {
   font-family: sans-serif;
@@ -140,7 +153,6 @@ h6 {
   opacity: 1;
 }
 
-
 .carousel-item-container, .carousel-item-container-modal {
   overflow: auto;
   position: relative;
@@ -175,7 +187,7 @@ h6 {
 
 .carousel-item-container-header{
   color: var(--secondary-color);
-  font-size: 1.5em;
+  font-size: 1.2em;
   font-weight: 600;
 }
 
@@ -215,9 +227,6 @@ h6 {
 #reviewCarousel > .carousel-inner{
   height: auto;
 }
-
-
-
 
 .carousel-item_image {
   margin-left: -25px;
@@ -268,11 +277,13 @@ h6 {
   position: absolute;
   z-index: 100000;
   margin: 1rem;
+  text-align: center;
   left: 0;
-  background-color: white;
-  border: 1px solid var(--secondary-color);
+  background-color: rgba(214, 219, 210, .9);
+  border: 2px solid var(--secondary-color);
   padding: 1rem;
   border-radius: 3rem;
+  max-width: 300px;
 }
 
 .info-modal-image-container-close{
@@ -284,15 +295,31 @@ h6 {
 }
 
 .info-modal-image-container-sub-header {
-  text-align: center;
   position: absolute;
   z-index: 100000;
   background-color: rgba(214, 219, 210, .8);
-  padding: 20px;
+  height: 50px;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  left: 0;
+  right: 0;
   bottom: 0px;
   color: white;
   border-top: 1px solid var(--secondary-color);
   border-bottom: 1px solid var(--secondary-color);
+}
+
+.info-modal-image-container-sub-header h6{
+  align-self: center;
+  margin-bottom: 0px;
+}
+
+.info-modal-image-container-rating{
+  position: absolute;
+  z-index: 100000;
+  bottom: 55px;
+  right: 1rem;
 }
 
 .info-modal-buttons {
