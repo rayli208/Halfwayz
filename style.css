@@ -21,10 +21,8 @@ body {
   height: 100%;
   margin: 0px;
   padding: 0px;
-  background-color: #f2f5ea;
-  background-image:
-    radial-gradient(at 47% 33%, hsl(208.42, 18%, 21%) 0, transparent 59%),
-    radial-gradient(at 82% 65%, hsl(345.53, 75%, 63%) 0, transparent 55%);
+  background: rgb(44,54,63);
+  background: linear-gradient(90deg, rgba(44,54,63,1) 0%, rgba(230,144,164,1) 55%, rgba(242,245,234,1) 100%);
 }
 
 /*Bootstrap overrides*/
@@ -71,7 +69,7 @@ h6 {
   border-color: var(--secondary-color);
 }
 
-.btn-outline-primary:hover, .btn-outline-primary:active {
+.btn-outline-primary:hover, .btn-outline-primary:active, .btn-check:focus+.btn-primary, .btn-primary:focus {
   color: #fff;
   background-color: var(--secondary-color);
   border-color: var(--secondary-color);
@@ -342,9 +340,43 @@ h6 {
   width: 100%;
 }
 
-/*TOTAL AREA*/
+/*MOBILE STYLES*/
 @media (max-width: 48em) {
   #total {
     display: flex;
+  }
+  
+  #contentCarousel{
+    margin-bottom: 1rem;
+  }
+
+  .carousel-item_image{
+    margin-left: -25px;
+    margin-right: -25px;
+  }
+
+  .carousel-inner {
+    height: auto;
+  }
+
+  .carousel-control-icon{
+    padding: 10px 15px;
+    font-size: 25px;
+  }
+
+  .carousel-item_header, .carousel-item-container-header{
+    font-size: 1.25rem;
+  }
+
+  .carousel-item_location, .carousel-item_reviews, .carousel-item-container-sub, .list-group-item{
+    font-size: .875rem;
+  }
+
+  .carousel-item-container-date{
+    font-size: .625rem;
+  }
+
+  .info-modal-image-container-sub-header h6 {
+    max-width: 300px;
   }
 }

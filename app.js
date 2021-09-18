@@ -186,15 +186,6 @@ function calcRoute() {
             //CENTER MAP ON MIDPOINT AND ZOOM OUT A BIT
             map.setCenter(midpoint);
             map.setZoom(10);
-            // //WRITE OUT MID POINT COORDINATES
-            // document.getElementById("midpoint").innerHTML = `
-            //     <div class="card text-dark bg-light" style="max-width: 18rem;">
-            //         <div class="card-header">Midpoint:</div>
-            //         <div class="card-body">
-            //             <p class="card-text">(${midpoint.lng.toFixed()}, ${midpoint.lat.toFixed()})</p>
-            //         </div>
-            //     </div>
-            // `
             getVenueInfo(midpoint);
         } else {
             alert("directions response " + status);
@@ -221,21 +212,17 @@ function computeTotalDistance(result) {
     //THROW IN SOME CARDS WITH FUN FACTS
     $("#total").html(`
         <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
-            <div class="card-header">Total Distance:</div>
+            <div class="card-header">Total Distance/Time:</div>
             <div class="card-body">
-                <p class="card-text">${(totalDist * 0.621371).toFixed(2)} miles</p>
-            </div>
-        </div>
-        <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
-            <div class="card-header">Total Time:</div>
-            <div class="card-body">
+                <p class="card-text">${Math.round((totalDist * 0.621371).toFixed(2))} miles</p>
                 <p class="card-text">${Math.round((totalTime / 60).toFixed(2))} minutes</p>
             </div>
         </div>
         <div class="card text-dark bg-light mb-3 mt-2 mt-md-0 mx-2 mx-md-0" style="max-width: 18rem;">
             <div class="card-header">Midpointz Saves You:</div>
             <div class="card-body">
-                <p class="card-text text-success">${Math.round((((totalDist * 0.621371) / 2).toFixed(2)))} miles and ${Math.round(((totalTime / 60).toFixed(2) / 2))} minutes</p>
+            <p class="card-text text-success">${Math.round((((totalDist * 0.621371) / 2).toFixed(2)))} miles</p>
+            <p class="card-text text-success">${Math.round(((totalTime / 60).toFixed(2) / 2))} minutes</p>
             </div>
         </div>
     `)
@@ -397,16 +384,16 @@ function callback(results, status) {
                     <div class="carousel-item-container">
                         <div class="container">
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-12 col-sm-3">
                                     <div class="carousel-item_image">
                                         ${picture}
                                     </div>
                                 </div>
-                                <div class="col-6 pt-2 pb-3">
+                                <div class="col-12 col-sm-6 pt-2 pb-sm-3">
                                 <div class="carousel-item_header">${place.name} ${price}</div>
                                     <div class="carousel-item_location">Location: ${place.vicinity}</div>
                                 </div>
-                                <div class="col-3 pt-2 pb-3">
+                                <div class="col-12 col-sm-3 pt-2 pb-3">
                                     ${rating}
                                     ${peopleRating}
                                     <div class="carousel-item_wrapper">
