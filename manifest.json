@@ -3,7 +3,8 @@
   "short_name": "MidPointz",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#fff",
+  "theme_color": "#FFA500",
+  "background_color": "#0000FF",
   "description": "Find the inbetween from you to your friends.",
   "icons": [
     {
