@@ -722,3 +722,25 @@ function showInfoModal(placeId) {
         }
     });
 }
+
+// register ServiceWorker
+
+// does the browser support service workers?
+if ('serviceWorker' in navigator) {
+
+    // Defer service worker installation until the page completes loading
+    navigator.serviceWorker.register('sw.js')
+        .then(function (registration) {
+        console.log('Service Worker Registered');
+        })
+        .catch(function (error) {
+            // display an error message
+            let msg = `Service Worker Error (${error})`;
+            console.error(msg);
+        });
+}
+else {
+    // happens when the app isn't served over a TLS connection (HTTPS)
+    // or if the browser doesn't support service workers
+    console.warn('Service Worker not available');
+}

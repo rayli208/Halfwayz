@@ -1,0 +1,31 @@
+{
+  "name": "MidPointz",
+  "short_name": "MidPointz",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#FFA500",
+  "background_color": "#0000FF",
+  "description": "Find the inbetween from you to your friends.",
+  "icons": [
+    {
+      "src": "images/logos/icon_144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logos/icon_120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logos/icon_96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "images/logos/icon_72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ]
+}
